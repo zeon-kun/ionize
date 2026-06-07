@@ -1,0 +1,19 @@
+# Dependencies / build
+node_modules/
+dist/
+
+# Obsidian local cache (keep config + plugin settings)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+
+# Generated graph output (regenerate with `bun run ionize`)
+graph/graph.json
+graph/graph.merged.json
+graph/graph.media.json
+graph/graph.semantic.json
+graph/graph.canvas
+graph/nodes/
+
+# OS
+.DS_Store

@@ -1,0 +1,27 @@
+{
+  "name": "ionize",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "3-pass knowledge-graph pipeline → Obsidian Canvas. Pass 1 (code + SQL) is local and deterministic.",
+  "scripts": {
+    "pass1": "bun scripts/pass1-code.ts",
+    "pass2": "bun scripts/pass2-media.ts",
+    "pass3": "bun scripts/pass3-semantic.ts",
+    "merge": "bun scripts/merge-graph.ts",
+    "canvas": "bun scripts/to-canvas.ts",
+    "ionize": "bun scripts/ionize.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "validate": "bash scripts/validate.sh"
+  },
+  "dependencies": {
+    "node-sql-parser": "^5.4.0",
+    "tree-sitter-wasms": "^0.1.13",
+    "web-tree-sitter": "^0.22.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}

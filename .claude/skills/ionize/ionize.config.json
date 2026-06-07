@@ -1,0 +1,17 @@
+{
+  "root": ".",
+  "sqlDialect": "PostgreSQL",
+  "layout": "type",
+  "maxFileBytes": 2000000,
+  "ignore": [
+    "node_modules",
+    ".git",
+    "dist",
+    "build",
+    ".next",
+    "out",
+    "vendor",
+    ".venv",
+    "__pycache__"
+  ]
+}

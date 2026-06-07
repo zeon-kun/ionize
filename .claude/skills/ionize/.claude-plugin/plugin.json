@@ -1,0 +1,21 @@
+{
+  "name": "ionize",
+  "displayName": "Ionize — Knowledge Graph for Obsidian",
+  "description": "Build a deterministic knowledge graph from a codebase or mixed corpus and render it as an Obsidian Canvas + linked notes. Pass 1 (code via tree-sitter + SQL) is local, free, and reproducible.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Muhammad Rafif Tri Risqullah",
+    "email": "rafif.zeon@gmail.com"
+  },
+  "homepage": "https://github.com/zeon-kun/ionize",
+  "repository": "https://github.com/zeon-kun/ionize",
+  "license": "MIT",
+  "keywords": [
+    "ionize",
+    "knowledge-graph",
+    "obsidian",
+    "canvas",
+    "tree-sitter",
+    "codebase"
+  ]
+}
