@@ -48,4 +48,4 @@ Writes (never reads back into the LLM): `graph/graph.json`, `graph/graph.canvas`
 - Pass 2 / Pass 3 are documented contracts + stubs, not implemented.
 - v1 code languages: JS/JSX/TS/TSX/Python + SQL; extend via the language registry (one row + one `.scm`).
 - CALLS resolved only within file/module (external calls dropped to avoid fan-out). Practical canvas ceiling ~1–2k nodes; use `--layout=file` for large corpora.
-- Packaged as a publishable Claude Code plugin (`.claude-plugin/`, `LICENSE`, CI, `PUBLISHING.md`); not yet pushed to a public repo.
+- Published as a Claude Code plugin via the vault-root marketplace (`/.claude-plugin/marketplace.json` → `source: ./.claude/skills/ionize`). The skill carries `plugin.json`, `LICENSE`, and `PUBLISHING.md`; CI lives at the vault root (`.github/workflows/validate.yml`). Install: `/plugin marketplace add zeon-kun/ionize`.

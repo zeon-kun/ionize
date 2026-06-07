@@ -1,9 +1,16 @@
-name: Validate
-on: [push, pull_request]
+name: Validate ionize plugin
+on:
+  push:
+    paths: ['.claude/skills/ionize/**', '.claude-plugin/**']
+  pull_request:
+    paths: ['.claude/skills/ionize/**', '.claude-plugin/**']
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .claude/skills/ionize
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2

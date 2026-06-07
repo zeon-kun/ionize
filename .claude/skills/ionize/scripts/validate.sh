@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Validate the ionize plugin package: JSON parses, SKILL.md frontmatter, plugin/marketplace manifests.
+# Validate the ionize plugin package: JSON parses, SKILL.md frontmatter, plugin.json manifest.
+# The marketplace manifest lives at the vault root and is the vault's concern, not the plugin's.
 # Pure stdlib (python3) so it runs in CI with no extra setup.
 set -uo pipefail
 
@@ -31,7 +32,7 @@ if miss:
 print("  ✓ SKILL.md frontmatter ok")
 PY
 
-echo "== plugin.json + marketplace.json required fields =="
+echo "== plugin.json required fields =="
 python3 - <<'PY' || errors=$((errors + 1))
 import json, re, sys
 bad = 0
@@ -40,11 +41,6 @@ if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", p.get("name", "")):
     print("  ✗ plugin.json: name missing or not kebab-case"); bad = 1
 else:
     print("  ✓ plugin.json name:", p["name"])
-mk = json.load(open(".claude-plugin/marketplace.json"))
-if not mk.get("name") or not mk.get("owner") or not isinstance(mk.get("plugins"), list) or not mk["plugins"]:
-    print("  ✗ marketplace.json: needs name + owner + non-empty plugins[]"); bad = 1
-else:
-    print("  ✓ marketplace.json plugins:", ", ".join(x.get("name", "?") for x in mk["plugins"]))
 sys.exit(bad)
 PY
 

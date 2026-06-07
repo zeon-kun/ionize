@@ -62,10 +62,9 @@ When this skill is loaded, read in this order:
 6. `references/canvas-schema.md` — JSONCanvas 1.0 + the deterministic layout
 
 ## Marketplace plugin
-This directory is **already a publishable plugin** (single-skill, `SKILL.md` at the plugin root) that also runs in-place as a project skill — no restructuring needed:
-- `.claude-plugin/plugin.json` — plugin manifest (name, version, author, license, keywords).
-- `.claude-plugin/marketplace.json` — self-hosted marketplace (`source: "./"`).
-- `scripts/validate.sh` (`bun run validate`) + `.github/workflows/validate.yml` — CI: typecheck + manifest checks.
+This directory **is** the ionize plugin and also runs in-place as a project skill. The vault repo hosts it as a marketplace — the marketplace manifest lives at the **vault root** (`.claude-plugin/marketplace.json`, `source: ./.claude/skills/ionize`), not here:
+- `.claude-plugin/plugin.json` — plugin manifest (name, version, author, license, keywords); what `/plugin install` reads.
+- `scripts/validate.sh` (`bun run validate`) — validates this plugin: JSON parses, `SKILL.md` frontmatter, `plugin.json` fields.
 - `LICENSE` (MIT), `PUBLISHING.md` — the publish + local-install steps.
 
-Publish by pushing this directory's contents as a repo root; then `/plugin marketplace add zeon-kun/ionize` → `/plugin install ionize@ionize`. Full steps in `PUBLISHING.md`.
+Install: `/plugin marketplace add zeon-kun/ionize` → `/plugin install ionize@ionize`. Full steps in `PUBLISHING.md`.
