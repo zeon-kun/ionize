@@ -1,0 +1,29 @@
+{
+  "name": "ionize",
+  "description": "Marketplace for the ionize knowledge-graph plugin, hosted from the vault.",
+  "owner": {
+    "name": "Muhammad Rafif Tri Risqullah",
+    "email": "rafif.zeon@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "ionize",
+      "source": "./.claude/skills/ionize",
+      "description": "Build a deterministic knowledge graph from a codebase/corpus → Obsidian Canvas + linked notes. Pass 1 (code + SQL) is local and free; Passes 2–3 (media, docs) are documented stubs.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Muhammad Rafif Tri Risqullah",
+        "email": "rafif.zeon@gmail.com",
+        "url": "https://github.com/zeon-kun"
+      },
+      "homepage": "https://github.com/zeon-kun/ionize",
+      "repository": "https://github.com/zeon-kun/ionize",
+      "license": "MIT",
+      "keywords": [
+        "ionize",
+        "knowledge-graph",
+        "obsidian"
+      ]
+    }
+  ]
+}
