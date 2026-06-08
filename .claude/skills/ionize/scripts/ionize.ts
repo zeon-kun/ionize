@@ -4,7 +4,7 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { loadConfig, GRAPH_DIR, VAULT_ROOT } from '../src/config.ts';
+import { loadConfig, resolveVaultRoot, graphPaths } from '../src/config.ts';
 import { runPass1 } from '../src/passes.ts';
 import { mergeGraphs } from '../src/merge.ts';
 import { saveGraph } from '../src/graph-io.ts';
@@ -14,7 +14,8 @@ import type { LayoutMode } from '../src/layout.ts';
 async function main(): Promise<void> {
   const { values } = parseArgs({
     options: {
-      root: { type: 'string' },
+      root: { type: 'string' }, // dir to scan
+      out: { type: 'string' }, // vault root to write graph/ into (default: --root)
       layout: { type: 'string' },
       'sql-dialect': { type: 'string' },
       media: { type: 'boolean' },
@@ -24,6 +25,10 @@ async function main(): Promise<void> {
 
   const cfg = await loadConfig();
   const root = path.resolve(values.root ?? cfg.root);
+  // Output defaults to the scanned repo, so a plugin-installed ionize writes the
+  // graph into the user's codebase — not the plugin cache the skill lives in.
+  const vaultRoot = resolveVaultRoot(values.out ?? root);
+  const P = graphPaths(vaultRoot);
   const mode = (values.layout as LayoutMode) ?? cfg.layout;
 
   // Pass 1 (working)
@@ -33,7 +38,7 @@ async function main(): Promise<void> {
     ignore: new Set(cfg.ignore),
     maxBytes: cfg.maxFileBytes,
   });
-  await saveGraph(path.join(GRAPH_DIR, 'graph.json'), pass1);
+  await saveGraph(P.json, pass1);
   process.stderr.write(
     `Pass 1: ${stats.codeFiles} code + ${stats.sqlFiles} sql → ${pass1.nodes.length} nodes, ${pass1.edges.length} edges\n`,
   );
@@ -43,13 +48,14 @@ async function main(): Promise<void> {
 
   // Merge
   const { graph, dropped } = mergeGraphs([pass1]);
-  await saveGraph(path.join(GRAPH_DIR, 'graph.merged.json'), graph);
+  await saveGraph(P.merged, graph);
   process.stderr.write(`Merge: ${graph.nodes.length} nodes, ${graph.edges.length} edges (${dropped} dropped)\n`);
 
   // Render
-  const outCanvas = path.join(GRAPH_DIR, 'graph.canvas');
-  const outNotes = path.join(GRAPH_DIR, 'nodes');
-  const notePathPrefix = path.relative(VAULT_ROOT, outNotes).split(path.sep).join('/');
+  const outCanvas = P.canvas;
+  const outNotes = P.notes;
+  // outNotes is always <vaultRoot>/graph/nodes, so this is deterministically "graph/nodes".
+  const notePathPrefix = path.relative(vaultRoot, outNotes).split(path.sep).join('/');
 
   const canvas = buildCanvas(graph, { mode, notePathPrefix });
   await mkdir(path.dirname(outCanvas), { recursive: true });

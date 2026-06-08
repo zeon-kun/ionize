@@ -43,14 +43,16 @@ Run passes in order; each writes a `{nodes,edges}` fragment, then merge + render
 **Render.** `to-canvas` lays out nodes with a deterministic banded grid and writes `graph.canvas` (JSONCanvas 1.0) + `nodes/*.md` (YAML frontmatter + `[[wikilink]]` edges). The canvas and the wikilink graph are two renderings of the same data.
 
 ## Outputs
-Written to the vault's `graph/` directory (never read back into the LLM):
+Written to a `graph/` directory under the **output vault root** (never read back into the LLM):
 ```
 graph/
 ├── graph.json       ← normalized {nodes, edges} from Pass 1 (+ later passes)
 ├── graph.canvas     ← JSONCanvas 1.0 — open in Obsidian Canvas
 └── nodes/*.md       ← per-node notes, linked by [[wikilinks]] for the Graph View
 ```
-CLI lives in this skill dir; run with **Bun** (`.ts` runs natively, no build step — see `package.json` scripts). Happy path: `bun run ionize -- --root <dir>`.
+The output root defaults to `--root` (the scanned dir), so canvas `file:` refs stay vault-relative (`graph/nodes/…`) and the graph lands in the codebase you scanned — not the plugin cache the skill installs into. Override with `--out <vault>` to scan one tree and write the graph into another (e.g. your Obsidian vault).
+
+CLI lives in this skill dir; run with **Bun** (`.ts` runs natively, no build step — see `package.json` scripts). Happy path: `bun run ionize -- --root <dir>` (add `--out <vault>` to redirect output).
 
 ## Reading order
 When this skill is loaded, read in this order:

@@ -33,7 +33,32 @@ export async function loadConfig(): Promise<IonizeConfig> {
 }
 
 // In-vault layout: skill lives at <vault>/.claude/skills/ionize.
+// VAULT_ROOT is only a sane default — when ionize runs as an installed plugin the
+// skill lives in a plugin cache, so callers MUST pass an explicit root (see
+// resolveVaultRoot). GRAPH_DIR is retained for the intermediate-JSON scripts
+// (pass1/2/3, merge) that don't emit vault-relative canvas references.
 export const VAULT_ROOT = path.resolve(SKILL_ROOT, '..', '..', '..');
 export const GRAPH_DIR = path.join(VAULT_ROOT, 'graph');
+
+/** The vault that graph/ is written under and canvas `file:` refs are relative to. */
+export function resolveVaultRoot(override?: string): string {
+  return override ? path.resolve(override) : VAULT_ROOT;
+}
+
+/**
+ * All output paths hang off ONE vault root. Because the notes dir is always
+ * `<vaultRoot>/graph/nodes`, the canvas notePathPrefix is guaranteed to be the
+ * vault-relative `graph/nodes` — it can never drift into a `../../` chain.
+ */
+export function graphPaths(vaultRoot: string) {
+  const graphDir = path.join(vaultRoot, 'graph');
+  return {
+    graphDir,
+    json: path.join(graphDir, 'graph.json'),
+    merged: path.join(graphDir, 'graph.merged.json'),
+    canvas: path.join(graphDir, 'graph.canvas'),
+    notes: path.join(graphDir, 'nodes'),
+  };
+}
 
 export { SKILL_ROOT };

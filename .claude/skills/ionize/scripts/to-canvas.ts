@@ -3,7 +3,7 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { GRAPH_DIR, VAULT_ROOT } from '../src/config.ts';
+import { resolveVaultRoot, graphPaths } from '../src/config.ts';
 import { loadGraph } from '../src/graph-io.ts';
 import { buildCanvas, buildNotes } from '../src/to-canvas.ts';
 import type { LayoutMode } from '../src/layout.ts';
@@ -12,21 +12,30 @@ async function main(): Promise<void> {
   const { values } = parseArgs({
     options: {
       in: { type: 'string' },
+      vault: { type: 'string' }, // base for vault-relative canvas refs (default: --out-notes' vault)
       'out-canvas': { type: 'string' },
       'out-notes': { type: 'string' },
       layout: { type: 'string' },
     },
   });
 
-  const inFile = path.resolve(values.in ?? path.join(GRAPH_DIR, 'graph.merged.json'));
-  const outCanvas = path.resolve(values['out-canvas'] ?? path.join(GRAPH_DIR, 'graph.canvas'));
-  const outNotes = path.resolve(values['out-notes'] ?? path.join(GRAPH_DIR, 'nodes'));
+  const vaultRoot = resolveVaultRoot(values.vault);
+  const P = graphPaths(vaultRoot);
+  const inFile = path.resolve(values.in ?? P.merged);
+  const outCanvas = path.resolve(values['out-canvas'] ?? P.canvas);
+  const outNotes = path.resolve(values['out-notes'] ?? P.notes);
   const mode = (values.layout as LayoutMode) ?? 'type';
 
   const graph = await loadGraph(inFile);
 
-  // Canvas file references are vault-relative.
-  const notePathPrefix = path.relative(VAULT_ROOT, outNotes).split(path.sep).join('/');
+  // Canvas file references are vault-relative. If the notes dir sits outside the
+  // vault the refs cannot resolve in Obsidian — fail loud instead of emitting `../`.
+  const notePathPrefix = path.relative(vaultRoot, outNotes).split(path.sep).join('/');
+  if (notePathPrefix.startsWith('..')) {
+    throw new Error(
+      `--out-notes (${outNotes}) is outside the vault (${vaultRoot}); pass --vault pointing at the Obsidian vault that will hold the notes.`,
+    );
+  }
   const canvas = buildCanvas(graph, { mode, notePathPrefix });
 
   await mkdir(path.dirname(outCanvas), { recursive: true });

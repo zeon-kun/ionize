@@ -37,7 +37,8 @@ Costs tokens. `scripts/pass3-semantic.ts`. **Contract:**
 ## Render — `scripts/to-canvas.ts`
 - `layout(graph)` → deterministic positions (banded grid by type, sorted by id).
 - Write `graph.canvas` (JSONCanvas 1.0) + `nodes/<slug>.md` (frontmatter + `[[wikilink]]` edges).
+- Canvas `file:` refs are vault-relative. The base is `--vault` (default: skill's in-vault root); `--out-notes` outside that vault is rejected rather than emitting a broken `../` ref.
 See `canvas-schema.md`.
 
 ## Dispatcher — `scripts/ionize.ts`
-Happy path for a code corpus: `pass1 → merge → to-canvas`, writing into the vault `graph/` dir. Pass 2/3 are opt-in (`--media`, `--semantic`) and no-ops in v1.
+Happy path for a code corpus: `pass1 → merge → to-canvas`, writing a `graph/` dir under the output vault root. The output root defaults to `--root` (the scanned dir); pass `--out <vault>` to redirect. Pass 2/3 are opt-in (`--media`, `--semantic`) and no-ops in v1.
